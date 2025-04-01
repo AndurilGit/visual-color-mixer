@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Color Mixer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @font-face {
+        font-family: 'LucideIcons';
+        src: url(https://cdn.jsdelivr.net/npm/lucide-static@latest/font/Lucide.ttf) format('truetype');
+      }
+      .lucide {
+        font-family: 'LucideIcons';
+        font-size: 1.25rem; /* Adjust size as needed */
+        line-height: 1;
+        display: inline-block;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+    </style>
+    <style>
+        /* Use Inter font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Style for the color swatch */
+        .color-swatch {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #d1d5db; /* gray-300 */
+            cursor: pointer;
+            border-radius: 0.375rem; /* rounded-md */
+            display: inline-block;
+            vertical-align: middle;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .color-swatch:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5); /* Indigo-500 shadow */
+        }
+        /* Hide the default color input appearance */
+        input[type="color"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 0;
+            height: 0;
+            padding: 0;
+            border: none;
+            visibility: hidden; /* Hide the input but keep it functional */
+        }
+        /* Style number inputs */
+        input[type="number"] {
+            width: 70px; /* Slightly wider */
+            text-align: center;
+            border: 1px solid #d1d5db; /* gray-300 */
+            border-radius: 0.375rem; /* rounded-md */
+            padding: 0.5rem; /* py-2 px-3 */
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #6366f1; /* indigo-500 */
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3); /* Indigo-500 shadow */
+        }
+        /* Transition for result color background */
+        #result-color {
+            transition: background-color 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 min-h-screen flex items-center justify-center p-4 sm:p-6 font-['Inter']">
+
+    <div class="bg-white p-8 sm:p-10 rounded-2xl shadow-xl w-full max-w-3xl">
+        <h1 class="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-10 flex items-center justify-center gap-3">
+            <i class="lucide text-indigo-600">palette</i> Visual Color Mixer
+        </h1>
+
+        <div id="color-inputs" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+            <div class="bg-gray-50 border border-gray-200 p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
+                <label class="block text-sm font-semibold text-gray-700 mb-3">Color 1</label>
+                <div class="flex items-center space-x-4">
+                    <input type="color" id="color1" name="color1" value="#FF0000" class="color-input-hidden">
+                    <span id="swatch1" class="color-swatch flex-shrink-0" style="background-color: #FF0000;" onclick="document.getElementById('color1').click()"></span>
+                    <input type="number" id="amount1" name="amount1" value="1" min="0" step="0.1" class="flex-grow">
+                    <label for="amount1" class="text-sm text-gray-600 whitespace-nowrap">Amount</label>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 border border-gray-200 p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
+                <label class="block text-sm font-semibold text-gray-700 mb-3">Color 2</label>
+                <div class="flex items-center space-x-4">
+                    <input type="color" id="color2" name="color2" value="#0000FF" class="color-input-hidden">
+                    <span id="swatch2" class="color-swatch flex-shrink-0" style="background-color: #0000FF;" onclick="document.getElementById('color2').click()"></span>
+                    <input type="number" id="amount2" name="amount2" value="1" min="0" step="0.1" class="flex-grow">
+                    <label for="amount2" class="text-sm text-gray-600 whitespace-nowrap">Amount</label>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 border border-gray-200 p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
+                <label class="block text-sm font-semibold text-gray-700 mb-3">Color 3</label>
+                <div class="flex items-center space-x-4">
+                    <input type="color" id="color3" name="color3" value="#FFFFFF" class="color-input-hidden">
+                    <span id="swatch3" class="color-swatch flex-shrink-0" style="background-color: #FFFFFF;" onclick="document.getElementById('color3').click()"></span>
+                    <input type="number" id="amount3" name="amount3" value="0" min="0" step="0.1" class="flex-grow">
+                    <label for="amount3" class="text-sm text-gray-600 whitespace-nowrap">Amount</label>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 border border-gray-200 p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
+                <label class="block text-sm font-semibold text-gray-700 mb-3">Color 4</label>
+                <div class="flex items-center space-x-4">
+                    <input type="color" id="color4" name="color4" value="#FFFFFF" class="color-input-hidden">
+                    <span id="swatch4" class="color-swatch flex-shrink-0" style="background-color: #FFFFFF;" onclick="document.getElementById('color4').click()"></span>
+                    <input type="number" id="amount4" name="amount4" value="0" min="0" step="0.1" class="flex-grow">
+                    <label for="amount4" class="text-sm text-gray-600 whitespace-nowrap">Amount</label>
+                </div>
+            </div>
+            </div>
+
+        <div class="text-center mb-10">
+            <button id="mix-button" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-105 inline-flex items-center gap-2">
+                <i class="lucide">blend</i> Mix Colors
+            </button>
+        </div>
+
+        <div class="text-center">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Resulting Color</h2>
+            <div id="result-color" class="w-full h-56 rounded-xl border border-gray-300 shadow-inner flex items-center justify-center text-3xl font-mono bg-gray-100 text-gray-500 relative overflow-hidden">
+                <span id="result-placeholder">Mix colors to see the result!</span>
+                 <p id="result-hex" class="absolute bottom-3 right-4 text-sm font-mono px-2 py-1 rounded bg-black bg-opacity-30"></p>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- Helper Functions ---
+
+        // Function to convert Hex color to RGB object
+        function hexToRgb(hex) {
+            const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+            hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        // Function to convert RGB object to Hex color
+        function rgbToHex(r, g, b) {
+            // Ensure values are within 0-255 and integers
+            r = Math.max(0, Math.min(255, Math.round(r)));
+            g = Math.max(0, Math.min(255, Math.round(g)));
+            b = Math.max(0, Math.min(255, Math.round(b)));
+            // Convert each component to a 2-digit hex string
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+        }
+
+        // Function to determine text color (black or white) based on background brightness
+        function getContrastingTextColor(hexColor) {
+            const rgb = hexToRgb(hexColor);
+            if (!rgb) return '#FFFFFF'; // Default to white if conversion fails
+            // Calculate luminance using the standard formula
+            const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
+            // Use white text on dark backgrounds, black text on light backgrounds
+            return luminance > 0.5 ? '#000000' : '#FFFFFF';
+        }
+
+
+        // --- DOM Elements ---
+        const colorInputs = document.querySelectorAll('input[type="color"]');
+        const amountInputs = document.querySelectorAll('input[type="number"]');
+        const mixButton = document.getElementById('mix-button');
+        const resultDiv = document.getElementById('result-color');
+        const resultHexP = document.getElementById('result-hex');
+        const resultPlaceholder = document.getElementById('result-placeholder');
+
+        // --- Event Listeners ---
+
+        // Update swatches when color inputs change
+        colorInputs.forEach((input, index) => {
+            input.addEventListener('input', (event) => {
+                const swatch = document.getElementById(`swatch${index + 1}`);
+                if (swatch) { // Check if swatch exists
+                   swatch.style.backgroundColor = event.target.value;
+                }
+            });
+        });
+
+        // Trigger mix calculation on button click
+        mixButton.addEventListener('click', () => {
+            let totalAmount = 0;
+            let weightedR = 0;
+            let weightedG = 0;
+            let weightedB = 0;
+            let colorsUsed = 0; // Count how many colors have amount > 0
+
+            // Loop through each color slot
+            for (let i = 1; i <= 4; i++) {
+                const colorInput = document.getElementById(`color${i}`);
+                const amountInput = document.getElementById(`amount${i}`);
+
+                // Ensure elements exist before accessing properties
+                if (!colorInput || !amountInput) continue;
+
+                const amount = parseFloat(amountInput.value) || 0; // Get amount, default to 0 if invalid
+
+                if (amount > 0) {
+                    const hexColor = colorInput.value;
+                    const rgbColor = hexToRgb(hexColor);
+
+                    if (rgbColor) {
+                        totalAmount += amount;
+                        weightedR += rgbColor.r * amount;
+                        weightedG += rgbColor.g * amount;
+                        weightedB += rgbColor.b * amount;
+                        colorsUsed++;
+                    }
+                }
+            }
+
+            // Calculate and display the final color
+            if (totalAmount > 0 && colorsUsed > 0) {
+                const finalR = weightedR / totalAmount;
+                const finalG = weightedG / totalAmount;
+                const finalB = weightedB / totalAmount;
+
+                const finalHex = rgbToHex(finalR, finalG, finalB);
+
+                // Update the result display
+                resultDiv.style.backgroundColor = finalHex;
+                resultPlaceholder.style.display = 'none'; // Hide placeholder text
+                resultHexP.textContent = finalHex; // Show hex code
+                resultHexP.style.color = getContrastingTextColor(finalHex); // Set contrast text color for hex
+                resultHexP.style.display = 'block'; // Make sure hex code is visible
+
+
+            } else {
+                // Handle case where no colors or amounts > 0 are selected
+                resultDiv.style.backgroundColor = '#f3f4f6'; // bg-gray-100
+                resultPlaceholder.style.display = 'block'; // Show placeholder text
+                resultPlaceholder.textContent = 'Add colors with amounts > 0 to mix.';
+                resultHexP.style.display = 'none'; // Hide hex code display
+            }
+        });
+
+         // Initialize swatches and default result state on load
+        window.addEventListener('load', () => {
+             colorInputs.forEach((input, index) => {
+                const swatch = document.getElementById(`swatch${index + 1}`);
+                 if (swatch && input) { // Check elements exist
+                    swatch.style.backgroundColor = input.value;
+                 }
+            });
+            // Initial state for result display
+            resultDiv.style.backgroundColor = '#f3f4f6'; // bg-gray-100
+            resultPlaceholder.style.display = 'block';
+            resultPlaceholder.textContent = 'Mix colors to see the result!';
+            resultHexP.style.display = 'none'; // Hide hex initially
+        });
+
+    </script>
+
+</body>
+</html>
